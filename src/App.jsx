@@ -10,6 +10,7 @@ import WisdomView from './components/WisdomView';
 import TogetherView from './components/TogetherView';
 import JournalView from './components/JournalView';
 import SettingsView, { loadSettings } from './components/SettingsView';
+import TalkView from './components/TalkView';
 import Confetti from './components/Confetti';
 import {
   getDailyKey, getWeeklyKey, getMonthlyKey,
@@ -21,8 +22,8 @@ import { ALL_DAILY, ALL_WEEKLY, ALL_MONTHLY } from './data/tasks';
 import './App.css';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('daily');   // top tabs
-  const [activePage, setActivePage] = useState('home');  // bottom nav
+  const [activeTab,  setActiveTab]  = useState('daily');
+  const [activePage, setActivePage] = useState('home');
   const [daily,   setDaily]   = useState({});
   const [weekly,  setWeekly]  = useState({});
   const [monthly, setMonthly] = useState({});
@@ -86,9 +87,11 @@ export default function App() {
     setNotes(prev => ({ ...prev, [key]: { text, updatedAt: new Date().toISOString() } }));
   }, []);
 
-  const handleBottomNav = (page) => {
-    if (page === 'home') setActivePage('home');
-    else setActivePage(page);
+  const handleBottomNav = (page) => setActivePage(page);
+
+  // Settings accessible from header gear icon
+  const handleSettingsClick = () => {
+    setActivePage(activePage === 'settings' ? 'home' : 'settings');
   };
 
   const dailyDone   = ALL_DAILY.filter(i => daily[i.id]).length;
@@ -102,11 +105,14 @@ export default function App() {
       {confetti && <Confetti onDone={() => setConfetti(false)} />}
 
       <Header
-        streaks={streaks} savedFlash={savedFlash}
-        dailyDone={dailyDone} dailyTotal={ALL_DAILY.length}
+        streaks={streaks}
+        savedFlash={savedFlash}
+        dailyDone={dailyDone}   dailyTotal={ALL_DAILY.length}
         weeklyDone={weeklyDone} weeklyTotal={ALL_WEEKLY.length}
         monthlyDone={monthlyDone} monthlyTotal={ALL_MONTHLY.length}
-        activeTab={activeTab} activePage={activePage}
+        activeTab={activeTab}
+        activePage={activePage}
+        onSettingsClick={handleSettingsClick}
       />
 
       {showTopTabs && (
@@ -125,10 +131,11 @@ export default function App() {
         {activePage === 'home' && activeTab === 'weekly'   && <WeeklyView  checked={weekly}  onToggle={toggleWeekly}  notes={notes} onNote={handleNote} settings={settings} />}
         {activePage === 'home' && activeTab === 'monthly'  && <MonthlyView checked={monthly} onToggle={toggleMonthly} notes={notes} onNote={handleNote} />}
         {activePage === 'home' && activeTab === 'progress' && <ProgressView streaks={streaks} daily={daily} weekly={weekly} monthly={monthly} />}
-        {activePage === 'words'    && <WisdomView    settings={settings} />}
-        {activePage === 'together' && <TogetherView  settings={settings} />}
-        {activePage === 'journal'  && <JournalView   settings={settings} />}
-        {activePage === 'settings' && <SettingsView  settings={settings} onSettingsChange={setSettings} />}
+        {activePage === 'words'    && <WisdomView   settings={settings} />}
+        {activePage === 'together' && <TogetherView settings={settings} />}
+        {activePage === 'journal'  && <JournalView  settings={settings} />}
+        {activePage === 'settings' && <SettingsView settings={settings} onSettingsChange={setSettings} />}
+        {activePage === 'talk'     && <TalkView     settings={settings} />}
       </main>
 
       <BottomNav active={activePage} onChange={handleBottomNav} />

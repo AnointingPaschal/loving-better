@@ -1,11 +1,11 @@
-import { BookOpenIcon, RingsIcon, PenIcon, SlidersIcon, HomeIcon } from './Icons';
+import { BookOpenIcon, RingsIcon, PenIcon, HomeIcon, MessageCircleIcon } from './Icons';
 
 const ITEMS = [
   { id: 'home',     label: 'Home',     Icon: HomeIcon },
   { id: 'words',    label: 'Words',    Icon: BookOpenIcon },
   { id: 'together', label: 'Together', Icon: RingsIcon },
   { id: 'journal',  label: 'Journal',  Icon: PenIcon },
-  { id: 'settings', label: 'Settings', Icon: SlidersIcon },
+  { id: 'talk',     label: 'Talk',     Icon: MessageCircleIcon },
 ];
 
 export default function BottomNav({ active, onChange }) {
@@ -28,34 +28,22 @@ export default function BottomNav({ active, onChange }) {
             onClick={() => onChange(item.id)}
             style={{
               flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '10px 4px 8px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
+              background: 'none', border: 'none', cursor: 'pointer',
               color: isActive ? '#C0556A' : '#B0A0A0',
               transition: 'color 0.2s',
-              gap: 4,
-              position: 'relative',
+              gap: 4, position: 'relative',
             }}
           >
             {isActive && (
               <span style={{
-                position: 'absolute',
-                top: 0, left: '50%', transform: 'translateX(-50%)',
+                position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
                 width: 28, height: 3, background: '#C0556A', borderRadius: '0 0 3px 3px',
               }} />
             )}
             <item.Icon size={21} color={isActive ? '#C0556A' : '#B0A0A0'} />
-            <span style={{
-              fontSize: 10,
-              fontFamily: 'sans-serif',
-              fontWeight: isActive ? '600' : '400',
-              letterSpacing: '0.02em',
-            }}>
+            <span style={{ fontSize: 10, fontFamily: 'sans-serif', fontWeight: isActive ? '600' : '400', letterSpacing: '0.02em' }}>
               {item.label}
             </span>
           </button>
