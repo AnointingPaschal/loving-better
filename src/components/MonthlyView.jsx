@@ -1,33 +1,26 @@
 import { useState } from 'react';
 import { MONTHLY_REVIEW, ALL_MONTHLY } from '../data/tasks';
 import { CheckItem } from './CheckItem';
+import RandomWisdom from './RandomWisdom';
 import { loadStreaks } from '../utils/storage';
 
 const CATEGORIES = ['What Went Well', 'What Needs Attention', 'Looking Ahead', 'Closing'];
 const CAT_COLORS = {
-  'What Went Well': { color: '#5A7A6E', bg: '#F5FAF8' },
-  'What Needs Attention': { color: '#C0556A', bg: '#FFF5F7' },
-  'Looking Ahead': { color: '#B8860B', bg: '#FFFBF0' },
-  'Closing': { color: '#5C1A2E', bg: '#FDE8EC' },
+  'What Went Well':      { color: '#5A7A6E', bg: '#F5FAF8' },
+  'What Needs Attention':{ color: '#C0556A', bg: '#FFF5F7' },
+  'Looking Ahead':       { color: '#B8860B', bg: '#FFFBF0' },
+  'Closing':             { color: '#5C1A2E', bg: '#FDE8EC' },
 };
 
 export default function MonthlyView({ checked, onToggle, notes, onNote }) {
   const [reflectionText, setReflectionText] = useState(notes['monthly_reflection']?.text || '');
   const done = ALL_MONTHLY.filter(i => checked[i.id]).length;
   const allDone = done === ALL_MONTHLY.length;
-  const now = new Date();
-  const monthStr = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const monthStr = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
   return (
     <>
-      <div style={{
-        background: 'linear-gradient(135deg, #5C1A2E, #8B2246)',
-        borderRadius: 14,
-        padding: '18px 18px',
-        marginBottom: 16,
-        color: 'white',
-        textAlign: 'center',
-      }}>
+      <div style={{ background: 'linear-gradient(135deg, #5C1A2E, #8B2246)', borderRadius: 14, padding: '18px 18px', marginBottom: 16, color: 'white', textAlign: 'center' }}>
         <div style={{ fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'sans-serif', marginBottom: 4 }}>Monthly Review</div>
         <div style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 4 }}>{monthStr}</div>
         <div style={{ fontSize: 13, opacity: 0.8, fontStyle: 'italic' }}>Sit together. No phones. One speaks, the other listens fully before responding.</div>
@@ -37,11 +30,9 @@ export default function MonthlyView({ checked, onToggle, notes, onNote }) {
         <div style={{ fontSize: 11, opacity: 0.7, marginTop: 5, fontFamily: 'sans-serif' }}>{done}/{ALL_MONTHLY.length} questions completed</div>
       </div>
 
-      {allDone && (
-        <div className="complete-badge">
-          ✨ Monthly review complete — this is what real commitment looks like.
-        </div>
-      )}
+      {allDone && <div className="complete-badge">✨ Monthly review complete — this is what real commitment looks like.</div>}
+
+      <RandomWisdom />
 
       {CATEGORIES.map(cat => {
         const catItems = MONTHLY_REVIEW.filter(i => i.category === cat);
@@ -50,9 +41,7 @@ export default function MonthlyView({ checked, onToggle, notes, onNote }) {
           <div key={cat} className="section-card" style={{ borderColor: `${color}30`, marginBottom: 14 }}>
             <div style={{ height: 3, background: `linear-gradient(90deg, ${color}, ${color}44)` }} />
             <div style={{ padding: '12px 16px 0' }}>
-              <div className="category-label" style={{ color, borderTop: 'none', paddingTop: 0 }}>
-                {cat}
-              </div>
+              <div className="category-label" style={{ color, borderTop: 'none', paddingTop: 0 }}>{cat}</div>
             </div>
             <div className="section-items" style={{ background: bg }}>
               {catItems.map(item => (
@@ -67,15 +56,12 @@ export default function MonthlyView({ checked, onToggle, notes, onNote }) {
         <div style={{ height: 3, background: 'linear-gradient(90deg, #5C1A2E, #5C1A2E44)' }} />
         <div style={{ padding: '14px 16px' }}>
           <div style={{ fontSize: 13, fontWeight: 'bold', color: '#5C1A2E', marginBottom: 8 }}>📝 Monthly Reflection Note</div>
-          <div style={{ fontSize: 12, color: '#7A6060', fontStyle: 'italic', marginBottom: 8 }}>Write anything from this review you want to carry forward. Both of you can contribute.</div>
+          <div style={{ fontSize: 12, color: '#7A6060', fontStyle: 'italic', marginBottom: 8 }}>Write anything from this review you want to carry forward.</div>
           <textarea
             className="notes-area"
             placeholder="This month we noticed… Next month we want to… One thing we're grateful for is…"
             value={reflectionText}
-            onChange={e => {
-              setReflectionText(e.target.value);
-              onNote('monthly_reflection', e.target.value);
-            }}
+            onChange={e => { setReflectionText(e.target.value); onNote('monthly_reflection', e.target.value); }}
             style={{ minHeight: 100 }}
           />
         </div>

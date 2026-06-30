@@ -5,6 +5,7 @@ import DailyView from './components/DailyView';
 import WeeklyView from './components/WeeklyView';
 import MonthlyView from './components/MonthlyView';
 import ProgressView from './components/ProgressView';
+import WisdomView from './components/WisdomView';
 import Confetti from './components/Confetti';
 import {
   getDailyKey, getWeeklyKey, getMonthlyKey,
@@ -25,7 +26,6 @@ export default function App() {
   const [confetti, setConfetti] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
 
-  // Load everything on mount
   useEffect(() => {
     setDaily(loadChecked(getDailyKey()));
     setWeekly(loadChecked(getWeeklyKey()));
@@ -34,19 +34,14 @@ export default function App() {
     setNotes(loadNotes());
   }, []);
 
-  const flash = () => {
-    setSavedFlash(true);
-    setTimeout(() => setSavedFlash(false), 1400);
-  };
+  const flash = () => { setSavedFlash(true); setTimeout(() => setSavedFlash(false), 1400); };
 
-  // Toggle daily
   const toggleDaily = useCallback((id) => {
     setDaily(prev => {
       const next = { ...prev, [id]: !prev[id] };
       saveChecked(getDailyKey(), next);
       flash();
-      const allDone = ALL_DAILY.every(i => next[i.id]);
-      if (allDone) {
+      if (ALL_DAILY.every(i => next[i.id])) {
         const updated = updateStreakOnComplete('daily', true);
         if (updated) { setStreaks(updated); setConfetti(true); markHistoryComplete('daily'); }
       }
@@ -54,14 +49,12 @@ export default function App() {
     });
   }, []);
 
-  // Toggle weekly
   const toggleWeekly = useCallback((id) => {
     setWeekly(prev => {
       const next = { ...prev, [id]: !prev[id] };
       saveChecked(getWeeklyKey(), next);
       flash();
-      const allDone = ALL_WEEKLY.every(i => next[i.id]);
-      if (allDone) {
+      if (ALL_WEEKLY.every(i => next[i.id])) {
         const updated = updateStreakOnComplete('weekly', true);
         if (updated) { setStreaks(updated); setConfetti(true); markHistoryComplete('weekly'); }
       }
@@ -69,14 +62,12 @@ export default function App() {
     });
   }, []);
 
-  // Toggle monthly
   const toggleMonthly = useCallback((id) => {
     setMonthly(prev => {
       const next = { ...prev, [id]: !prev[id] };
       saveChecked(getMonthlyKey(), next);
       flash();
-      const allDone = ALL_MONTHLY.every(i => next[i.id]);
-      if (allDone) {
+      if (ALL_MONTHLY.every(i => next[i.id])) {
         const updated = updateStreakOnComplete('monthly', true);
         if (updated) { setStreaks(updated); setConfetti(true); markHistoryComplete('monthly'); }
       }
@@ -89,8 +80,8 @@ export default function App() {
     setNotes(prev => ({ ...prev, [key]: { text, updatedAt: new Date().toISOString() } }));
   }, []);
 
-  const dailyDone = ALL_DAILY.filter(i => daily[i.id]).length;
-  const weeklyDone = ALL_WEEKLY.filter(i => weekly[i.id]).length;
+  const dailyDone   = ALL_DAILY.filter(i => daily[i.id]).length;
+  const weeklyDone  = ALL_WEEKLY.filter(i => weekly[i.id]).length;
   const monthlyDone = ALL_MONTHLY.filter(i => monthly[i.id]).length;
 
   return (
@@ -98,39 +89,29 @@ export default function App() {
       {confetti && <Confetti onDone={() => setConfetti(false)} />}
 
       <Header
-        streaks={streaks}
-        savedFlash={savedFlash}
-        dailyDone={dailyDone}
-        dailyTotal={ALL_DAILY.length}
-        weeklyDone={weeklyDone}
-        weeklyTotal={ALL_WEEKLY.length}
-        monthlyDone={monthlyDone}
-        monthlyTotal={ALL_MONTHLY.length}
+        streaks={streaks} savedFlash={savedFlash}
+        dailyDone={dailyDone} dailyTotal={ALL_DAILY.length}
+        weeklyDone={weeklyDone} weeklyTotal={ALL_WEEKLY.length}
+        monthlyDone={monthlyDone} monthlyTotal={ALL_MONTHLY.length}
         activeTab={tab}
       />
 
       <TabNav active={tab} onChange={setTab}
         counts={{
-          daily: { done: dailyDone, total: ALL_DAILY.length },
-          weekly: { done: weeklyDone, total: ALL_WEEKLY.length },
-          monthly: { done: monthlyDone, total: ALL_MONTHLY.length },
+          daily:    { done: dailyDone,   total: ALL_DAILY.length },
+          weekly:   { done: weeklyDone,  total: ALL_WEEKLY.length },
+          monthly:  { done: monthlyDone, total: ALL_MONTHLY.length },
+          words:    null,
           progress: null,
         }}
       />
 
       <main className="main-content">
-        {tab === 'daily' && (
-          <DailyView checked={daily} onToggle={toggleDaily} notes={notes} onNote={handleNote} />
-        )}
-        {tab === 'weekly' && (
-          <WeeklyView checked={weekly} onToggle={toggleWeekly} notes={notes} onNote={handleNote} />
-        )}
-        {tab === 'monthly' && (
-          <MonthlyView checked={monthly} onToggle={toggleMonthly} notes={notes} onNote={handleNote} />
-        )}
-        {tab === 'progress' && (
-          <ProgressView streaks={streaks} daily={daily} weekly={weekly} monthly={monthly} />
-        )}
+        {tab === 'daily'    && <DailyView   checked={daily}   onToggle={toggleDaily}   notes={notes} onNote={handleNote} />}
+        {tab === 'weekly'   && <WeeklyView  checked={weekly}  onToggle={toggleWeekly}  notes={notes} onNote={handleNote} />}
+        {tab === 'monthly'  && <MonthlyView checked={monthly} onToggle={toggleMonthly} notes={notes} onNote={handleNote} />}
+        {tab === 'words'    && <WisdomView />}
+        {tab === 'progress' && <ProgressView streaks={streaks} daily={daily} weekly={weekly} monthly={monthly} />}
       </main>
     </div>
   );
