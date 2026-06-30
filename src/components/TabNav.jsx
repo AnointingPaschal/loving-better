@@ -1,14 +1,15 @@
+import { SunIcon, CalWeekIcon, CalMonthIcon, TrendingUpIcon } from './Icons';
+
 const TABS = [
-  { id: 'daily',   label: 'Daily',   icon: '☀️' },
-  { id: 'weekly',  label: 'Weekly',  icon: '🗓' },
-  { id: 'monthly', label: 'Monthly', icon: '💬' },
-  { id: 'words',   label: 'Words',   icon: '💡' },
-  { id: 'progress',label: 'Growth',  icon: '📈' },
+  { id: 'daily',    label: 'Daily',   Icon: SunIcon },
+  { id: 'weekly',   label: 'Weekly',  Icon: CalWeekIcon },
+  { id: 'monthly',  label: 'Monthly', Icon: CalMonthIcon },
+  { id: 'progress', label: 'Growth',  Icon: TrendingUpIcon },
 ];
 
 export default function TabNav({ active, onChange, counts }) {
   return (
-    <nav className="tab-nav" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+    <nav className="tab-nav">
       {TABS.map(t => {
         const c = counts[t.id];
         const isDone = c && c.done === c.total && c.total > 0;
@@ -17,9 +18,9 @@ export default function TabNav({ active, onChange, counts }) {
             key={t.id}
             className={`tab-btn ${active === t.id ? 'active' : ''} ${isDone ? 'done' : ''}`}
             onClick={() => onChange(t.id)}
-            style={{ minWidth: t.id === 'words' ? 'auto' : undefined }}
           >
-            {t.icon} {t.label}
+            <t.Icon size={15} color={active === t.id ? '#5C1A2E' : 'rgba(255,255,255,0.6)'} />
+            <span style={{ marginLeft: 4 }}>{t.label}</span>
             {c && (
               <span className="tab-badge">
                 {isDone ? '✓' : `${c.done}/${c.total}`}

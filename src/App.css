@@ -461,3 +461,27 @@ body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 4px; }
+
+/* ── Bottom nav spacing ──────────────────────────────────────────────────────── */
+.main-content { padding-bottom: 110px; }
+
+/* ── Tab btn icon alignment ──────────────────────────────────────────────────── */
+.tab-btn { display: flex; align-items: center; justify-content: center; }
+
+/* ── Check circle fill overrides ─────────────────────────────────────────────── */
+.check-circle.checked svg { display: block; }
+
+/* ── Section count colors ────────────────────────────────────────────────────── */
+.section-count.complete { background: #D4EAE2; color: #5A7A6E; }
+.section-count.partial  { background: #FDF3DC; color: #B8860B; }
+.section-count.empty    { background: #EDF2F7; color: #4A5568; }
+
+/* ── Streak icon alignment ───────────────────────────────────────────────────── */
+.streak-card { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.streak-icon { display: none; }
+
+/* ── Complete badge ──────────────────────────────────────────────────────────── */
+.complete-badge { font-style: italic; }
+
+/* ── Saved pill ──────────────────────────────────────────────────────────────── */
+.saved-pill { font-family: var(--font-sans); font-style: normal; font-size: 11px; }

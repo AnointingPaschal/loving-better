@@ -1,15 +1,18 @@
+import { FlameIcon, CalendarCheckIcon, StarIcon } from './Icons';
+
+const ITEMS = [
+  { Icon: FlameIcon,        color: '#C0556A', label: 'Day streak',   key: 'daily' },
+  { Icon: CalendarCheckIcon,color: '#5A7A6E', label: 'Weeks done',   key: 'weekly' },
+  { Icon: StarIcon,         color: '#B8860B', label: 'Reviews done', key: 'monthly' },
+];
+
 export default function StreakBar({ streaks }) {
-  const items = [
-    { icon: '🔥', value: streaks.daily || 0, label: 'Day streak' },
-    { icon: '📅', value: streaks.weekly || 0, label: 'Weeks done' },
-    { icon: '✨', value: streaks.monthly || 0, label: 'Reviews done' },
-  ];
   return (
     <div className="streak-bar">
-      {items.map(s => (
+      {ITEMS.map(s => (
         <div key={s.label} className="streak-card">
-          <span className="streak-icon">{s.icon}</span>
-          <div className="streak-value">{s.value}</div>
+          <s.Icon size={22} color={s.color} />
+          <div className="streak-value" style={{ color: s.color }}>{streaks[s.key] || 0}</div>
           <div className="streak-label">{s.label}</div>
         </div>
       ))}

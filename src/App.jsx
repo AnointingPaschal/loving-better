@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import TabNav from './components/TabNav';
+import BottomNav from './components/BottomNav';
 import DailyView from './components/DailyView';
 import WeeklyView from './components/WeeklyView';
 import MonthlyView from './components/MonthlyView';
 import ProgressView from './components/ProgressView';
 import WisdomView from './components/WisdomView';
+import TogetherView from './components/TogetherView';
+import JournalView from './components/JournalView';
+import SettingsView, { loadSettings } from './components/SettingsView';
 import Confetti from './components/Confetti';
 import {
   getDailyKey, getWeeklyKey, getMonthlyKey,
@@ -17,12 +21,14 @@ import { ALL_DAILY, ALL_WEEKLY, ALL_MONTHLY } from './data/tasks';
 import './App.css';
 
 export default function App() {
-  const [tab, setTab] = useState('daily');
-  const [daily, setDaily] = useState({});
-  const [weekly, setWeekly] = useState({});
+  const [activeTab, setActiveTab] = useState('daily');   // top tabs
+  const [activePage, setActivePage] = useState('home');  // bottom nav
+  const [daily,   setDaily]   = useState({});
+  const [weekly,  setWeekly]  = useState({});
   const [monthly, setMonthly] = useState({});
-  const [streaks, setStreaks] = useState({ daily: 0, weekly: 0, monthly: 0 });
-  const [notes, setNotes] = useState({});
+  const [streaks, setStreaks]  = useState({ daily: 0, weekly: 0, monthly: 0 });
+  const [notes,   setNotes]   = useState({});
+  const [settings, setSettings] = useState(loadSettings());
   const [confetti, setConfetti] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
 
@@ -80,9 +86,16 @@ export default function App() {
     setNotes(prev => ({ ...prev, [key]: { text, updatedAt: new Date().toISOString() } }));
   }, []);
 
+  const handleBottomNav = (page) => {
+    if (page === 'home') setActivePage('home');
+    else setActivePage(page);
+  };
+
   const dailyDone   = ALL_DAILY.filter(i => daily[i.id]).length;
   const weeklyDone  = ALL_WEEKLY.filter(i => weekly[i.id]).length;
   const monthlyDone = ALL_MONTHLY.filter(i => monthly[i.id]).length;
+
+  const showTopTabs = activePage === 'home';
 
   return (
     <div className="app">
@@ -93,26 +106,32 @@ export default function App() {
         dailyDone={dailyDone} dailyTotal={ALL_DAILY.length}
         weeklyDone={weeklyDone} weeklyTotal={ALL_WEEKLY.length}
         monthlyDone={monthlyDone} monthlyTotal={ALL_MONTHLY.length}
-        activeTab={tab}
+        activeTab={activeTab} activePage={activePage}
       />
 
-      <TabNav active={tab} onChange={setTab}
-        counts={{
-          daily:    { done: dailyDone,   total: ALL_DAILY.length },
-          weekly:   { done: weeklyDone,  total: ALL_WEEKLY.length },
-          monthly:  { done: monthlyDone, total: ALL_MONTHLY.length },
-          words:    null,
-          progress: null,
-        }}
-      />
+      {showTopTabs && (
+        <TabNav active={activeTab} onChange={setActiveTab}
+          counts={{
+            daily:    { done: dailyDone,   total: ALL_DAILY.length },
+            weekly:   { done: weeklyDone,  total: ALL_WEEKLY.length },
+            monthly:  { done: monthlyDone, total: ALL_MONTHLY.length },
+            progress: null,
+          }}
+        />
+      )}
 
       <main className="main-content">
-        {tab === 'daily'    && <DailyView   checked={daily}   onToggle={toggleDaily}   notes={notes} onNote={handleNote} />}
-        {tab === 'weekly'   && <WeeklyView  checked={weekly}  onToggle={toggleWeekly}  notes={notes} onNote={handleNote} />}
-        {tab === 'monthly'  && <MonthlyView checked={monthly} onToggle={toggleMonthly} notes={notes} onNote={handleNote} />}
-        {tab === 'words'    && <WisdomView />}
-        {tab === 'progress' && <ProgressView streaks={streaks} daily={daily} weekly={weekly} monthly={monthly} />}
+        {activePage === 'home' && activeTab === 'daily'    && <DailyView   checked={daily}   onToggle={toggleDaily}   notes={notes} onNote={handleNote} settings={settings} />}
+        {activePage === 'home' && activeTab === 'weekly'   && <WeeklyView  checked={weekly}  onToggle={toggleWeekly}  notes={notes} onNote={handleNote} settings={settings} />}
+        {activePage === 'home' && activeTab === 'monthly'  && <MonthlyView checked={monthly} onToggle={toggleMonthly} notes={notes} onNote={handleNote} />}
+        {activePage === 'home' && activeTab === 'progress' && <ProgressView streaks={streaks} daily={daily} weekly={weekly} monthly={monthly} />}
+        {activePage === 'words'    && <WisdomView    settings={settings} />}
+        {activePage === 'together' && <TogetherView  settings={settings} />}
+        {activePage === 'journal'  && <JournalView   settings={settings} />}
+        {activePage === 'settings' && <SettingsView  settings={settings} onSettingsChange={setSettings} />}
       </main>
+
+      <BottomNav active={activePage} onChange={handleBottomNav} />
     </div>
   );
 }
